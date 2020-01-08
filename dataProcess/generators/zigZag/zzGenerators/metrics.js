@@ -20,6 +20,7 @@ function generateMetrics(states) {
     (acc, currentState, i) => {
       const prevState = states[i === 0 ? i : i - 1];
 
+      // NOTE: if the trend is continuing.
       if (prevState && currentState.mode === prevState.mode) {
         const currentDiff = (() => {
           let highValue;
@@ -38,6 +39,7 @@ function generateMetrics(states) {
           }
           return highValue - lowValue;
         })();
+
         acc.current.meta.vertical = currentDiff;
         acc.current.meta.slope = currentDiff / currentState.duration || 0;
         acc.current.meta.distance =
@@ -53,7 +55,14 @@ function generateMetrics(states) {
         })();
         acc.current.meta.magnitude = (y * currentState.duration) / 2;
       } else {
+        // NOTE: if the trend has not continued.
+
         acc.current.meta.duration = prevState.duration;
+
+        if (acc.current.meta.duration === 1) {
+          acc.current.meta.magnitude = acc.current.meta.vertical / 2;
+        }
+
         acc.current.endState = { ...prevState };
 
         delete acc.current.startValue;
