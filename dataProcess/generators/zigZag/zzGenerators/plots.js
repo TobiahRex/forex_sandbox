@@ -5,7 +5,7 @@ function generatePlots(metrics) {
     let count = duration;
     let runningValue = mode === 'uptrend' ? low : high;
     while (count > 0) {
-      runningValue += metric.slope;
+      runningValue += metric.meta.slope;
       acc.push(runningValue);
       count -= 1;
     }

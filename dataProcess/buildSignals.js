@@ -30,17 +30,18 @@ function buildSignals(cb) {
       averageSmall: trigAverageSmall,
       averageBig: trigAverageBig,
       zigZag: trigZigZag,
-      zZCycleDuration: trigZzCycleDuration,
-      zZCycleMagnitude: trigZzCycleMagnitude,
+      zzDurations: trigZZDurations,
+      zzMagnitudes: trigZZMagnitudes,
     } = triggerData;
     const {
       average: dirAverage,
       averageSmall: dirAverageSmall,
       averageBig: dirAverageBig,
       zigZag: dirZigZag,
-      zZCycleDuration: dirZzCycleDuration,
-      zZCycleMagnitude: dirZzCycleMagnitude,
+      zzDurations: dirZZDurations,
+      zzMagnitudes: dirZZMagnitudes,
     } = directionData;
+    // console.log('directionData: ', directionData);
 
     const signals = {
       priceData: cleanData,
@@ -48,14 +49,14 @@ function buildSignals(cb) {
       trigAverageSmall,
       trigAverageBig,
       trigZigZag,
-      trigZzCycleDuration,
-      trigZzCycleMagnitude,
+      trigZZDurations,
+      trigZZMagnitudes,
       dirAverage,
       dirAverageSmall,
       dirAverageBig,
       dirZigZag,
-      dirZzCycleDuration,
-      dirZzCycleMagnitude,
+      dirZZDurations,
+      dirZZMagnitudes,
     };
 
     cb(null, signals);

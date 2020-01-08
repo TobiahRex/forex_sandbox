@@ -51,8 +51,8 @@ server.listen(PORT, err =>
     err ||
       `
     ==> 📡  Server @ ${PORT}
-    `
-  )
+    `,
+  ),
 );
 
 mongoose.connect(MONGO, err =>
@@ -60,6 +60,6 @@ mongoose.connect(MONGO, err =>
     err ||
       `
     ==> 📜  MONGO @ ${MONGO}
-    `
-  )
+    `,
+  ),
 );

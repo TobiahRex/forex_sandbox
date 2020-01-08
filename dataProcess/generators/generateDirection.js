@@ -30,7 +30,11 @@ function generateDirection(options) {
     period: 21,
   });
 
-  const { states, metrics, plots } = zigZag;
+  const {
+    // states,
+    metrics,
+    plots,
+  } = zigZag;
 
   const rsiBull = new EMA({
     values: plots.map(val => val),

@@ -15,7 +15,6 @@
     }
   ]
 */
-
 function generateMetrics(states) {
   const metrics = states.reduce(
     (acc, currentState, i) => {
@@ -25,24 +24,36 @@ function generateMetrics(states) {
         const currentDiff = (() => {
           let highValue;
           let lowValue;
+
           if (currentState.mode === 'uptrend') {
-            lowValue = currentState.minPriceL;
             highValue = currentState.maxPriceH;
-            return highValue - lowValue;
-          }
-          if (currentState.mode === 'downtrend') {
+            lowValue = currentState.minPriceL;
+          } else if (currentState.mode === 'downtrend') {
             highValue = currentState.minPriceL;
             lowValue = currentState.maxPriceH;
-            return highValue - lowValue;
+          } else {
+            // mode = 'unknown'
+            highValue = acc.startValue;
+            lowValue = currentState.value;
           }
-          // mode = 'unknown'
-          highValue = acc.startValue;
-          lowValue = currentState.value;
           return highValue - lowValue;
         })();
-        acc.current.slope = currentDiff / currentState.duration || 0;
+        acc.current.meta.vertical = currentDiff;
+        acc.current.meta.slope = currentDiff / currentState.duration || 0;
+        acc.current.meta.distance =
+          Math.sqrt(currentDiff ** 2 + currentState.duration ** 2) *
+          (currentDiff > 0 ? 1 : -1);
+        const y = (() => {
+          if (currentDiff > 0) {
+            if (currentDiff < 1) return currentDiff + 1;
+            return currentDiff;
+          }
+          if (currentDiff > -1) return currentDiff - 1;
+          return currentDiff;
+        })();
+        acc.current.meta.magnitude = (y * currentState.duration) / 2;
       } else {
-        acc.current.magnitude = (currentState.duration * acc.current.slope) / 2;
+        acc.current.meta.duration = prevState.duration;
         acc.current.endState = { ...prevState };
 
         delete acc.current.startValue;
@@ -58,8 +69,16 @@ function generateMetrics(states) {
           return currentState.value; // WARNING: May need to traverse history and find the most recent trend and return the appropriate value.
         })();
 
+        const seedVal = currentState.value - startValue; // NOTE: initialize the slope as the next height difference (positive or negative) then divide by 1 (implied).
+
         acc.current = {
-          slope: currentState.value - startValue, // NOTE: initialize the slope as the next height difference (positive or negative) then divide by 1 (implied).
+          meta: {
+            slope: seedVal,
+            vertical: seedVal,
+            distance: Math.sqrt(seedVal ** 2 + 1) * (seedVal > 0 ? 1 : -1),
+            magnitude: 0,
+            duration: 0,
+          },
           startState: { ...currentState }, // NOTE: If i is less than the last value, the give the next state, otherwise give the current state.
           endState: null,
           /*
@@ -76,7 +95,12 @@ function generateMetrics(states) {
     },
     {
       current: {
-        slope: 0,
+        meta: {
+          vertical: 0,
+          slope: 0,
+          distance: 0,
+          magnitude: 0,
+        },
         startState: states[0],
         startValue:
           states[0].mode === 'uptrend'

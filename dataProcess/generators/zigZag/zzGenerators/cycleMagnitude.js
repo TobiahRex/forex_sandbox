@@ -8,7 +8,7 @@ function getCycleMagnitude(metrics) {
         val.endState.mode === 'downtrend'
       ) {
         const combo =
-          Math.abs(acc.prevValue.magnitude) + Math.abs(val.magnitude);
+          Math.abs(acc.prevValue.magnitude) + Math.abs(val.meta.magnitude);
         acc.prevValue = null;
         acc.vals.push(combo);
       }
