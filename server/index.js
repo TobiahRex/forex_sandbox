@@ -2,10 +2,15 @@
 
 const express = require('express');
 const logger = require('./logger');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
 
 const argv = require('./argv');
 const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
+const api = require('./api');
+
+
 const isDev = process.env.NODE_ENV !== 'production';
 const ngrok =
   (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
@@ -16,7 +21,26 @@ const app = express();
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
-
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
+app.use((req, res, next) => {
+  const resRef = res;
+  resRef.handle = (err, data) => {
+    if (err) {
+      process.stdout.write(`Response Error: 😕
+${JSON.stringify(err)}
+`);
+    } else {
+      //       process.stdout.write(`Response Data: 😎
+      // ${JSON.stringify(data)}
+      // `);
+    }
+    res.status(err ? 400 : 200).send(err || data);
+  };
+  next();
+});
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
   outputPath: resolve(process.cwd(), 'build'),
@@ -29,6 +53,7 @@ const host = customHost || null; // Let http.Server use its default IPv6/4 host
 const prettyHost = customHost || 'localhost';
 
 // use the gzipped bundle
+app.use('/api', api);
 app.get('*.js', (req, res, next) => {
   req.url = req.url + '.gz'; // eslint-disable-line
   res.set('Content-Encoding', 'gzip');
