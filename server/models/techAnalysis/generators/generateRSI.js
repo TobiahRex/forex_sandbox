@@ -37,7 +37,7 @@ function generateRSI(data) {
   }));
 
   fs.writeFile(
-    path.resolve('./dataProcess/raw/rsi-value.txt'),
+    path.resolve('./server/models/techAnalysis/raw/rsi-value.txt'),
     rsi.map(val => val.value + '\n').join(''), // eslint-disable-line
     _err => {
       if (_err) throw new Error('_err: ', _err);
@@ -45,7 +45,7 @@ function generateRSI(data) {
   );
 
   fs.writeFile(
-    path.resolve('./dataProcess/raw/time.txt'),
+    path.resolve('./server/models/techAnalysis/raw/time.txt'),
     rsi
       .map(
         val => `${moment(new Date(val.time)).format('DD/MM/YYYY hh:mm:ss')}\n`,

@@ -37,7 +37,7 @@ function generateData(data) {
     });
 
   fs.writeFile(
-    path.resolve('./dataProcess/raw/prices.txt'),
+    path.resolve('./server/models/techAnalysis/raw/prices.txt'),
     cleanData.map(({ close }) => close + '\n').join(''), // eslint-disable-line
     _err => {
       if (_err) throw new Error(_err);
@@ -51,7 +51,7 @@ function generateData(data) {
   });
 
   fs.writeFile(
-    path.resolve('./dataProcess/raw/price-zigZag.txt'),
+    path.resolve('./server/models/techAnalysis/raw/price-zigZag.txt'),
     priceZigZag.plots.map(val => `${val}\n`).join(''), // eslint-disable-line
     _err => {
       if (_err) throw new Error('_err: ', _err);
