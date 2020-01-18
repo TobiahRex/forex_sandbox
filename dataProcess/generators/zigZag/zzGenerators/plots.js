@@ -1,3 +1,12 @@
+/**
+  @function generatePlots Responsible for generating the final data points
+  used to graph the zigZag line pattern given the metric data points that
+  are dynamically generated.
+  @param {array} metrics the result of metrics.js output.
+  @return {array} plots - the plot points, that should be used to create a
+  zig zag line plot on a graph.
+ */
+
 function generatePlots(metrics) {
   const plots = metrics.reduce((acc, metric) => {
     const { duration, mode, maxPriceH: high, minPriceL: low } = metric.endState;

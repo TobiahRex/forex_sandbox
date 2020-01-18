@@ -1,5 +1,16 @@
 /* eslint-disable no-param-reassign */
 /**
+  NOTE: ZigZag metrics is mainly responsible for generating the countable occurences,
+  of various meta data. They are based on simple geometric ideas such as,
+  rise, run, slope, area under line, slope magnitude, and overal slope direction.
+  Given these data points, we can objective an otherwise continuous data set,
+  into a discrete data set, and thus categorize that various data points
+  into different categories, and by so doing, extract probability of those
+  data points occuring in the future. Metrics, generation is at the heart of
+  generating these discrete data points.
+ */
+
+/**
   @function generateMetrics - calculates the slope and magnitude for the zigZag trend.
     - diff = difference between the highest and lowest prices
     - slope is calculated as (diff / duration) aka (rise / run) | dynamically calculated for every continuation data point.
