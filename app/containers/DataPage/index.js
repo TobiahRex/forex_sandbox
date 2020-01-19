@@ -14,6 +14,7 @@ import messages from './messages';
 import DivCenter from './DivCenter';
 import DivText from './DivText';
 import Ptitle from './Ptitle';
+import useTable from './hooks';
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
@@ -25,6 +26,8 @@ export default function FeaturePage() {
   const onPanelChange = React.useCallback(panelIndex => {
     console.log('%ctabIndex', 'background:blue;color:white;', panelIndex);
   }, []);
+
+  const tablePrices = useTable('priceData');
 
   return (
     <div>
@@ -46,10 +49,16 @@ export default function FeaturePage() {
               <FormattedMessage {...messages.headers.priceData} />
             </DivText>
             <Table />
-            {/* TODO create a price data table */}
+            {/*
+              TODO create a price data table
+
+              data keys are:
+              'dateString', 'time', 'open', 'high', 'low', 'close'
+            */}
+            <Table columns={tablePrices.columns} dataSource={tablePrices.dataSource} />
           </DivCenter>
         </TabPane>
-        
+
         <TabPane tab="Trigger" key="2">
           <DivCenter>
             <DivText>

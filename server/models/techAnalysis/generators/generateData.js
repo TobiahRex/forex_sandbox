@@ -57,7 +57,7 @@ function generateData(data) {
       if (_err) throw new Error('_err: ', _err);
     },
   );
-
+  console.log(Object(cleanData[0]));
   return cleanData;
 }
 
