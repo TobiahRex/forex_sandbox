@@ -1,9 +1,11 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import actions from '../modules/actions';
+import * as actions from '../modules/actions';
 
 export default connect(
   ({ technicalData }) => ({ technicalData }),
-  dispatch => bindActionCreators(actions, dispatch),
+  dispatch => ({
+    handlers: bindActionCreators(actions, dispatch),
+  }),
 );

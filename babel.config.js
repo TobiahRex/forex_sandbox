@@ -11,6 +11,13 @@ module.exports = {
     '@babel/preset-react',
   ],
   plugins: [
+    [
+      'import',
+      {
+        libraryName: 'antd',
+        style: 'css',
+      },
+    ],
     'styled-components',
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-syntax-dynamic-import',
@@ -26,10 +33,7 @@ module.exports = {
       ],
     },
     test: {
-      plugins: [
-        '@babel/plugin-transform-modules-commonjs',
-        'dynamic-import-node',
-      ],
+      plugins: ['@babel/plugin-transform-modules-commonjs', 'dynamic-import-node'],
     },
   },
 };

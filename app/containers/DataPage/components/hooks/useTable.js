@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import moment from 'moment';
 
 // 'dateString', 'time', 'open', 'high', 'low', 'close'
 
@@ -69,8 +70,34 @@ const allColumns = {
   ],
 };
 
-export default function useTable(data, tableType = 'priceData') {
+const seedData = [
+  {
+    open: 100,
+    high: 100,
+    low: 1,
+    close: 50,
+    dateString: new Date(),
+    time: Date.now(),
+  },
+];
+
+export default function useTable(tableType = 'priceData', rawData = seedData) {
   const columns = useMemo(() => allColumns[tableType], [tableType]);
 
-  return { columns, dataSource: data };
+  const dataSource = useMemo(() => {
+    switch (tableType) {
+      case 'priceData':
+        return rawData.map(({ open, high, low, close, dateString, time }) => ({
+          open,
+          high,
+          low,
+          close,
+          time: moment(time).format('hh:mm:ss'),
+          dateString: `${moment(dateString).format('YYYY-MM-DD')}`,
+        }));
+      default:
+        return null;
+    }
+  }, [rawData]);
+  return { columns, dataSource };
 }

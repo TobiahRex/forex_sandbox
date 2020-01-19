@@ -14,12 +14,8 @@ function getCycleMagnitude(metrics) {
     (acc, val) => {
       if (!acc.prevValue || val.endState.mode === 'uptrend') {
         acc.prevValue = val;
-      } else if (
-        acc.prevValue.endState.mode === 'uptrend' &&
-        val.endState.mode === 'downtrend'
-      ) {
-        const combo =
-          Math.abs(acc.prevValue.magnitude) + Math.abs(val.meta.magnitude);
+      } else if (acc.prevValue.endState.mode === 'uptrend' && val.endState.mode === 'downtrend') {
+        const combo = Math.abs(acc.prevValue.magnitude) + Math.abs(val.meta.magnitude);
         acc.prevValue = null;
         acc.vals.push(combo);
       }

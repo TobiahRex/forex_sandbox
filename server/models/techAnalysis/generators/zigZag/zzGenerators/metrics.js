@@ -54,8 +54,7 @@ function generateMetrics(states) {
         acc.current.meta.vertical = currentDiff;
         acc.current.meta.slope = currentDiff / currentState.duration || 0;
         acc.current.meta.distance =
-          Math.sqrt(currentDiff ** 2 + currentState.duration ** 2) *
-          (currentDiff > 0 ? 1 : -1);
+          Math.sqrt(currentDiff ** 2 + currentState.duration ** 2) * (currentDiff > 0 ? 1 : -1);
         const y = (() => {
           if (currentDiff > 0) {
             if (currentDiff < 1) return currentDiff + 1;
@@ -67,18 +66,25 @@ function generateMetrics(states) {
         acc.current.meta.magnitude = (y * currentState.duration) / 2;
       } else {
         // NOTE: if the trend has not continued.
-
         acc.current.meta.duration = prevState.duration;
 
+        // NOTE: edge case for single duration values.
         if (acc.current.meta.duration === 1) {
           acc.current.meta.magnitude = acc.current.meta.vertical / 2;
         }
 
-        acc.current.endState = { ...prevState };
+        // NOTE: Calculates Force of momentum:
+        acc.current.meta.force = (() => {
+          const { magnitude, distance, duration } = acc.current.meta;
+          const velocity = distance / duration;
+          return (magnitude * velocity) / duration;
+        })();
 
+        acc.current.endState = { ...prevState };
         delete acc.current.startValue;
         acc.all.push(acc.current);
 
+        // NOTE: Setup next value object.
         const startValue = (() => {
           if (currentState.mode === 'uptrend') {
             return currentState.minPriceL; // NOTE: The newest low
@@ -122,10 +128,7 @@ function generateMetrics(states) {
           magnitude: 0,
         },
         startState: states[0],
-        startValue:
-          states[0].mode === 'uptrend'
-            ? states[0].maxPriceH
-            : states[0].minPriceL,
+        startValue: states[0].mode === 'uptrend' ? states[0].maxPriceH : states[0].minPriceL,
       },
       all: [],
       endState: null,

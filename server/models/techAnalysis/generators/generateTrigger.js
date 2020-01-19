@@ -18,9 +18,7 @@ function generateTrigger(seedData, { writeToFiles = true }) {
     period: 34,
   });
 
-  const rsiAvg = rsiAvgSmall
-    .map((val, i) => val - rsiAvgBig[i])
-    .filter(Boolean);
+  const rsiAvg = rsiAvgSmall.map((val, i) => val - rsiAvgBig[i]).filter(Boolean);
   const bulletValues = rsiAvg.map((val, i) => {
     if (rsiAvg[i + 1]) {
       return (val - rsiAvg[i + 1]) * 10;
@@ -36,7 +34,9 @@ function generateTrigger(seedData, { writeToFiles = true }) {
     data: bullet,
     reversalAmount: 10,
   });
+
   const { states, metrics, plots } = zigZag;
+
   const bulletFastEma = new EMA({
     values: bullet,
     period: 8,
@@ -58,68 +58,52 @@ function generateTrigger(seedData, { writeToFiles = true }) {
       },
     );
     fs.writeFile(
-      path.resolve(
-        './server/models/techAnalysis/trigger/trigger-bulletFastEma.txt',
-      ),
+      path.resolve('./server/models/techAnalysis/trigger/trigger-bulletFastEma.txt'),
       bulletFastEma.map(val => val + '\n').join(''), // eslint-disable-line
       _err => {
         if (_err) throw new Error('_err: ', _err);
       },
     );
     fs.writeFile(
-      path.resolve(
-        './server/models/techAnalysis/trigger/trigger-bulletSlowEma.txt',
-      ),
+      path.resolve('./server/models/techAnalysis/trigger/trigger-bulletSlowEma.txt'),
       bulletSlowEma.map(val => val + '\n').join(''), // eslint-disable-line
       _err => {
         if (_err) throw new Error('_err: ', _err);
       },
     );
     fs.writeFile(
-      path.resolve(
-        './server/models/techAnalysis/trigger/trigger-zigZag-mode.txt',
-      ),
+      path.resolve('./server/models/techAnalysis/trigger/trigger-zigZag-mode.txt'),
       states.map(val => (val.mode === 'uptrend' ? `${1}\n` : `${-1}\n`)).join(''), // eslint-disable-line
       _err => {
         if (_err) throw new Error('_err: ', _err);
       },
     );
     fs.writeFile(
-      path.resolve(
-        './server/models/techAnalysis/trigger/trigger-zigZag-plots.txt',
-      ),
+      path.resolve('./server/models/techAnalysis/trigger/trigger-zigZag-plots.txt'),
       plots.map(val => val + '\n').join(''), // eslint-disable-line
       _err => {
         if (_err) throw new Error('_err: ', _err);
       },
     );
     fs.writeFile(
-      path.resolve(
-        './server/models/techAnalysis/trigger/trigger-zigZag-metrics.txt',
-      ),
+      path.resolve('./server/models/techAnalysis/trigger/trigger-zigZag-metrics.txt'),
       metrics.map(val => JSON.stringify(val, null, 2) + '\n').join(''), // eslint-disable-line
       _err => {
         if (_err) throw new Error('_err: ', _err);
       },
     );
     fs.writeFile(
-      path.resolve(
-        './server/models/techAnalysis/trigger/trigger-zigZag-magnitude.txt',
-      ),
+      path.resolve('./server/models/techAnalysis/trigger/trigger-zigZag-magnitude.txt'),
       metrics.map(val => val.magnitude + '\n').join(''), // eslint-disable-line
       _err => {
         if (_err) throw new Error('_err: ', _err);
       },
     );
     fs.writeFile(
-      path.resolve(
-        './server/models/techAnalysis/trigger/trigger-zigZag-duration.txt',
-      ),
+      path.resolve('./server/models/techAnalysis/trigger/trigger-zigZag-duration.txt'),
       metrics
         .map(val =>
-          val.slope > 0
-            ? `${val.endState.duration}\n`
-            : `${val.endState.duration * -1}\n`,
+          val.slope > 0 ? `${val.endState.duration}\n` : `${val.endState.duration * -1}\n`,
         )
         .join(''), // eslint-disable-line
       _err => {
@@ -127,18 +111,14 @@ function generateTrigger(seedData, { writeToFiles = true }) {
       },
     );
     fs.writeFile(
-      path.resolve(
-        './server/models/techAnalysis/trigger/trigger-zigZag-cycleDuration.txt',
-      ),
+      path.resolve('./server/models/techAnalysis/trigger/trigger-zigZag-cycleDuration.txt'),
       zzDurations.map(val => `${val}\n`).join(''), // eslint-disable-line
       _err => {
         if (_err) throw new Error('_err: ', _err);
       },
     );
     fs.writeFile(
-      path.resolve(
-        './server/models/techAnalysis/trigger/trigger-zigZag-cycleMagnitude.txt',
-      ),
+      path.resolve('./server/models/techAnalysis/trigger/trigger-zigZag-cycleMagnitude.txt'),
       zzMagnitudes.map(val => `${val}\n`).join(''), // eslint-disable-line
       _err => {
         if (_err) throw new Error('_err: ', _err);

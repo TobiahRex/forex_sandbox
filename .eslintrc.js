@@ -23,6 +23,8 @@ module.exports = {
     },
   },
   rules: {
+    'object-shorthand': 0,
+    'func-names': 0,
     'prettier/prettier': ['error', prettierOptions],
     'arrow-body-style': [2, 'as-needed'],
     'class-methods-use-this': 0,

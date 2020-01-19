@@ -43,6 +43,7 @@ module.exports = require('./webpack.base.babel')({
       exclude: /a\.js|node_modules/, // exclude node_modules
       failOnError: false, // show a warning when there is a circular dependency
     }),
+    new webpack.DefinePlugin(config.globals),
   ],
 
   // Emit a source map for easier debugging

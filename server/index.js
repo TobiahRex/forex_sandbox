@@ -11,10 +11,8 @@ import setup from './middlewares/frontendMiddleware';
 import api from './api';
 
 const isDev = process.env.NODE_ENV !== 'production';
-const ngrok =
-  (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
-    ? require('ngrok')
-    : false;
+
+const ngrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel ? require('ngrok') : false;
 const { resolve } = require('path');
 const app = express();
 
