@@ -35,6 +35,38 @@ const allColumns = {
       key: 'close',
     },
   ],
+  indicatorData: [
+    {
+      title: 'EMA',
+      dataIndex: 'average',
+      key: 'average',
+    },
+    {
+      title: 'EMA Fast',
+      dataIndex: 'averageSmall',
+      key: 'averageSmall',
+    },
+    {
+      title: 'EMA Slow',
+      dataIndex: 'averageBig',
+      key: 'averageBig',
+    },
+    {
+      title: 'Zig Zag Raw',
+      dataIndex: 'zigZag',
+      key: 'zigZag',
+    },
+    {
+      title: 'Zig Zag Duration',
+      dataIndex: 'zzDurations',
+      key: 'zzDurations',
+    },
+    {
+      title: 'Zig Zag Magnitude',
+      dataIndex: 'zzMagnitudes',
+      key: 'zzMagnitudes',
+    },
+  ],
 };
 
 export default function useTable(data, tableType = 'priceData') {

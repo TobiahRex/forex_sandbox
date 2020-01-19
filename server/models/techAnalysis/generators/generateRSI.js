@@ -4,7 +4,7 @@ const path = require('path');
 
 const EMA = require('../indicators/ema');
 
-function generateRSI(data) {
+function generateRSI(data, { writeToFiles = false }) {
   const netChangeVals = data.map((price, i) => {
     const lastPrice = data[i > 0 ? i - 1 : NaN];
     if (lastPrice) {
@@ -36,25 +36,27 @@ function generateRSI(data) {
     time: data[i].time,
   }));
 
-  fs.writeFile(
-    path.resolve('./server/models/techAnalysis/raw/rsi-value.txt'),
-    rsi.map(val => val.value + '\n').join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
-
-  fs.writeFile(
-    path.resolve('./server/models/techAnalysis/raw/time.txt'),
-    rsi
-      .map(
-        val => `${moment(new Date(val.time)).format('DD/MM/YYYY hh:mm:ss')}\n`,
-      )
-      .join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
+  if (writeToFiles) {
+    fs.writeFile(
+      path.resolve('./server/models/techAnalysis/raw/rsi-value.txt'),
+      rsi.map(val => val.value + '\n').join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+    fs.writeFile(
+      path.resolve('./server/models/techAnalysis/raw/time.txt'),
+      rsi
+        .map(
+          val =>
+            `${moment(new Date(val.time)).format('DD/MM/YYYY hh:mm:ss')}\n`,
+        )
+        .join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+  }
 
   return rsi;
 }

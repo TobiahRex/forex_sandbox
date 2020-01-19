@@ -4,11 +4,11 @@ const path = require('path');
 const generateZigZag = require('./zigZag/generateZigZag');
 
 /**
-  @function generateData converts array of strings, into array of objects. Also writes results to raw.prices.txt and generates ZigZag values.
+  @function generatePriceData converts array of strings, into array of objects. Also writes results to raw.prices.txt and generates ZigZag values.
   @param {array} data array of strings: ['20191001 000000;117.868000;117.877000;117.848000;117.848000;0']
   @return {object} cleanData { open, high, low, close, time }
 */
-function generateData(data) {
+function generatePriceData(data, { writeToFiles = false }) {
   const cleanData = data
     .split('\n')
     .filter(Boolean)
@@ -36,29 +36,30 @@ function generateData(data) {
       };
     });
 
-  fs.writeFile(
-    path.resolve('./server/models/techAnalysis/raw/prices.txt'),
-    cleanData.map(({ close }) => close + '\n').join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error(_err);
-    },
-  );
-
   const priceZigZag = generateZigZag({
     times: cleanData.map(({ time }) => time),
     data: cleanData.map(({ close }) => close),
     reversalAmount: 0.01,
   });
 
-  fs.writeFile(
-    path.resolve('./server/models/techAnalysis/raw/price-zigZag.txt'),
-    priceZigZag.plots.map(val => `${val}\n`).join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
-  console.log(Object(cleanData[0]));
+  if (writeToFiles) {
+    fs.writeFile(
+      path.resolve('./server/models/techAnalysis/raw/prices.txt'),
+      cleanData.map(({ close }) => close + '\n').join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error(_err);
+      },
+    );
+    fs.writeFile(
+      path.resolve('./server/models/techAnalysis/raw/price-zigZag.txt'),
+      priceZigZag.plots.map(val => `${val}\n`).join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+  }
+
   return cleanData;
 }
 
-module.exports = generateData;
+module.exports = generatePriceData;

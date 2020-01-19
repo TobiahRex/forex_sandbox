@@ -1,13 +1,5 @@
-const generateData = require('./generateData');
-const generateRSI = require('./generateRSI');
-const generateDirection = require('./generateDirection');
-const generateTrigger = require('./generateTrigger');
-const generateZigZag = require('./zigZag/generateZigZag');
-
-module.exports = {
-  generateData,
-  generateRSI,
-  generateDirection,
-  generateTrigger,
-  generateZigZag,
-};
+export { default as generatePriceData } from './generatePriceData';
+export { default as generateRSI } from './generateRSI';
+export { default as generateDirection } from './generateDirection';
+export { default as generateTrigger } from './generateTrigger';
+export { default as generateZigZag } from './zigZag/generateZigZag';

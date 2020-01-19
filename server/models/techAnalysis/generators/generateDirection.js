@@ -7,7 +7,7 @@ const getCycleDuration = require('./zigZag/zzGenerators/cycleDuration');
 const getCycleMagnitude = require('./zigZag/zzGenerators/cycleMagnitude');
 const EMA = require('../indicators/ema');
 
-function generateDirection(options) {
+function generateDirection(options, { writeToFiles = true }) {
   const { zigZagReversal, data } = options;
 
   const fastRsiDirection = generateHigherTimeRsi({
@@ -45,80 +45,81 @@ function generateDirection(options) {
     period: 34,
   });
 
-  fs.writeFile(
-    path.resolve('./server/models/techAnalysis/direction/direction-rsi.txt'),
-    slowRsiDirection.map(val => `${val}\n`).join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
-  fs.writeFile(
-    path.resolve(
-      './server/models/techAnalysis/direction/direction-rsiAverage.txt',
-    ),
-    rsiAverage.map(val => `${val}\n`).join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
-  fs.writeFile(
-    path.resolve(
-      './server/models/techAnalysis/direction/direction-rsiBull.txt',
-    ),
-    rsiBull.map(val => `${val}\n`).join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
-  fs.writeFile(
-    path.resolve(
-      './server/models/techAnalysis/direction/direction-rsiBear.txt',
-    ),
-    rsiBear.map(val => `${val}\n`).join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
-  fs.writeFile(
-    path.resolve('./server/models/techAnalysis/direction/direction-zigZag.txt'),
-    plots.map(val => `${val}\n`).join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
-  fs.writeFile(
-    path.resolve(
-      './server/models/techAnalysis/direction/direction-zigZag-metrics.txt',
-    ),
-    metrics.map(val => JSON.stringify(val, null, 2) + '\n').join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
-
+  const zzMagnitudes = getCycleMagnitude(metrics);
   const zzDurations = getCycleDuration(metrics);
 
-  fs.writeFile(
-    path.resolve(
-      './server/models/techAnalysis/direction/direction-zigZag-cycleDuration.txt',
-    ),
-    zzDurations.map(duration => `${duration}\n`).join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
-
-  const zzMagnitudes = getCycleMagnitude(metrics);
-
-  fs.writeFile(
-    path.resolve(
-      './server/models/techAnalysis/direction/direction-zigZag-cycleMagnitude.txt',
-    ),
-    zzMagnitudes.map(val => `${val}\n`).join(''), // eslint-disable-line
-    _err => {
-      if (_err) throw new Error('_err: ', _err);
-    },
-  );
+  if (writeToFiles) {
+    fs.writeFile(
+      path.resolve('./server/models/techAnalysis/direction/direction-rsi.txt'),
+      slowRsiDirection.map(val => `${val}\n`).join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+    fs.writeFile(
+      path.resolve(
+        './server/models/techAnalysis/direction/direction-rsiAverage.txt',
+      ),
+      rsiAverage.map(val => `${val}\n`).join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+    fs.writeFile(
+      path.resolve(
+        './server/models/techAnalysis/direction/direction-rsiBull.txt',
+      ),
+      rsiBull.map(val => `${val}\n`).join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+    fs.writeFile(
+      path.resolve(
+        './server/models/techAnalysis/direction/direction-rsiBear.txt',
+      ),
+      rsiBear.map(val => `${val}\n`).join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+    fs.writeFile(
+      path.resolve(
+        './server/models/techAnalysis/direction/direction-zigZag.txt',
+      ),
+      plots.map(val => `${val}\n`).join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+    fs.writeFile(
+      path.resolve(
+        './server/models/techAnalysis/direction/direction-zigZag-metrics.txt',
+      ),
+      metrics.map(val => JSON.stringify(val, null, 2) + '\n').join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+    fs.writeFile(
+      path.resolve(
+        './server/models/techAnalysis/direction/direction-zigZag-cycleDuration.txt',
+      ),
+      zzDurations.map(duration => `${duration}\n`).join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+    fs.writeFile(
+      path.resolve(
+        './server/models/techAnalysis/direction/direction-zigZag-cycleMagnitude.txt',
+      ),
+      zzMagnitudes.map(val => `${val}\n`).join(''), // eslint-disable-line
+      _err => {
+        if (_err) throw new Error('_err: ', _err);
+      },
+    );
+  }
 
   return {
     average: rsiAverage,

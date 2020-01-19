@@ -1,34 +1,25 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import * as generators from './generators';
 
 const {
-  generateData,
+  generatePriceData,
   generateRSI,
   generateTrigger,
   generateDirection,
-} = require('./generators');
+} = generators;
 
-function buildSignals(cb) {
+export default function buildSignals(req, cb) {
   fs.readFile(
     path.resolve('./server/models/techAnalysis/data.txt'),
     'utf8',
-    (err, data) => {
+    (err, rawPrices) => {
       if (err) cb(err);
 
-      const cleanData = generateData(data);
-      const rsi = generateRSI(cleanData);
-      const triggerData = generateTrigger({
-        rsi,
-        data: cleanData,
-      });
+      const cleanData = generatePriceData(rawPrices, req);
+      const rsi = generateRSI(cleanData, req);
 
-      const directionData = generateDirection({
-        data: cleanData,
-        timeLength: 10,
-        rawRsi: rsi,
-        zigZagReversal: 5,
-      });
-
+      const triggerData = generateTrigger({ rsi, data: cleanData }, req);
       const {
         average: trigAverage,
         averageSmall: trigAverageSmall,
@@ -37,6 +28,16 @@ function buildSignals(cb) {
         zzDurations: trigZZDurations,
         zzMagnitudes: trigZZMagnitudes,
       } = triggerData;
+
+      const directionData = generateDirection(
+        {
+          data: cleanData,
+          timeLength: 10,
+          rawRsi: rsi,
+          zigZagReversal: 5,
+        },
+        req,
+      );
       const {
         average: dirAverage,
         averageSmall: dirAverageSmall,
@@ -45,7 +46,6 @@ function buildSignals(cb) {
         zzDurations: dirZZDurations,
         zzMagnitudes: dirZZMagnitudes,
       } = directionData;
-      // console.log('directionData: ', directionData);
 
       const signals = {
         priceData: cleanData,
@@ -67,5 +67,3 @@ function buildSignals(cb) {
     },
   );
 }
-
-module.exports = buildSignals;

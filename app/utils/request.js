@@ -1,3 +1,5 @@
+import { BASE_URL } from 'utils/constants';
+
 /**
  * Parses the JSON returned by a network request
  *
@@ -38,7 +40,7 @@ function checkStatus(response) {
  * @return {object}           The response data
  */
 export default function request(url, options) {
-  return fetch(url, options)
+  return fetch(BASE_URL + url, options)
     .then(checkStatus)
     .then(parseJSON);
 }
