@@ -52,13 +52,30 @@ function handleDataResponse(state) {
     }),
   );
 }
-function handleDataError(state, { error, errorMsg }) {
+function handleDataError(state, action) {
+  const {
+    error,
+    payload: { errorMsg },
+  } = action;
+
+  const prevFetching = state.get('isFetching', 0);
+
   if (typeof error === 'boolean') {
-    return state.merge(fromJS({ ...defaultAsyncState, error, errorMsg }));
+    return state.merge(
+      fromJS({
+        isFetching: prevFetching - 1,
+        error,
+        errorMsg,
+      }),
+    );
   }
   if (typeof error === 'string' && identity.isTruthyString(error)) {
     return state.merge(
-      fromJS({ ...defaultAsyncState, error: true, errorMsg: error }),
+      fromJS({
+        isFetching: prevFetching - 1,
+        error: true,
+        errorMsg: error,
+      }),
     );
   }
   return state;
