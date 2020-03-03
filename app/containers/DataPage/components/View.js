@@ -9,17 +9,20 @@ import { useInjectSaga } from 'utils/injectSaga';
 import H1 from 'components/H1';
 import reducer from '../modules/reducer';
 import saga from '../modules/saga';
+import { selectPriceData } from '../modules/selectors';
 import messages from './messages';
 import DivCenter from './DivCenter';
 // import DivText from './DivText';
 import Ptitle from './Ptitle';
 import { useTable } from './hooks';
+import { compose } from 'redux';
+import { connect } from 'ngrok';
 
 const { TabPane } = Tabs;
 const { Panel } = Collapse;
 const key = 'data';
 
-export default function DataPage(props) {
+function DataPage(props) {
   useInjectReducer({ key, reducer });
   useInjectSaga({ key, saga });
 
@@ -41,7 +44,7 @@ export default function DataPage(props) {
   const tablePrices = useTable('priceData');
   // const tableTrigger = useTable('indicatorData');
   // const tableDirection = useTable('indicatorData');
-
+ debugger
   return (
     <div>
       <Helmet>
@@ -153,3 +156,12 @@ DataPage.propTypes = {
     getDataSuite: func.isRequired,
   }),
 };
+
+const withConnect = connect(
+  (state) => #TODO
+)
+
+export default compose(
+  withConnect,
+  memo,
+)(DataPage);

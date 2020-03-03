@@ -10,7 +10,7 @@ while (count < 100) {
 }
 const result = generateZigZag({ data: numbers, reversalAmount: 0.01 });
 
-result.plots.forEach(val => console.log(val));
+// result.plots.forEach(val => console.log(val));
 
 function generateZigZag({ data, reversalAmount }) {
   const defaultState = {

@@ -1,21 +1,19 @@
 import * as types from './types';
 
-const dataRequest = options => ({
+const dataRequest = payload => ({
   type: types.DATA_REQUEST,
-  payload: options,
+  payload,
 });
 
-const dataResponse = options => ({
+const dataResponse = payload => ({
   type: types.DATA_RESPONSE,
-  payload: options,
+  payload,
 });
 
-const dataError = ({ error, errorMsg }) => ({
+const dataError = payload => ({
   type: types.DATA_ERROR,
-  payload: {
-    errorMsg,
-  },
-  error,
+  payload,
+  error: payload.error,
 });
 
 export const async = {
@@ -24,40 +22,40 @@ export const async = {
   error: dataError,
 };
 
-export const getDataSuite = options => ({
+export const getDataSuite = payload => ({
   type: types.DATA_GET_SUITE,
-  payload: options,
+  payload,
 });
 
-export const getPriceData = options => ({
+export const getPriceData = payload => ({
   type: types.DATA_GET_PRICES,
-  payload: options,
+  payload,
 });
 
-export const getDirectionData = options => ({
+export const getDirectionData = payload => ({
   type: types.DATA_GET_DIRECTION,
-  payload: options,
+  payload,
 });
 
-export const getTriggerData = options => ({
+export const getTriggerData = payload => ({
   type: types.DATA_GET_TRIGGER,
-  payload: options,
+  payload,
 });
 
-export const receivedDataSuite = response => ({
+export const receivedDataSuite = payload => ({
   type: types.DATA_RECEIVE_SUITE,
-  payload: response,
+  payload,
 });
 
-export const receivedPriceData = response => ({
+export const receivedPriceData = payload => ({
   type: types.DATA_RECEIVE_PRICES,
-  payload: response,
+  payload,
 });
-export const receivedDirectionData = response => ({
+export const receivedDirectionData = payload => ({
   type: types.DATA_RECEIVE_DIRECTION,
-  payload: response,
+  payload,
 });
-export const receivedTriggerData = response => ({
+export const receivedTriggerData = payload => ({
   type: types.DATA_RECEIVE_TRIGGER,
-  payload: response,
+  payload,
 });

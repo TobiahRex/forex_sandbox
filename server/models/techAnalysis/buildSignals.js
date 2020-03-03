@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import * as generators from './generators';
+// import { log } from 'util';
 
 const {
   generatePriceData,
@@ -14,22 +15,24 @@ export default function buildSignals(req, cb) {
     path.resolve('./server/models/techAnalysis/data.txt'),
     'utf8',
     (err, rawPrices) => {
-      if (err) cb(err);
+      if (err) {
+        return cb(err);
+      }
 
       const cleanData = generatePriceData(rawPrices, req);
 
       if (req.query.type === 'prices') {
-        cb(cleanData);
+        return cb(null, cleanData);
       }
 
       const rsi = generateRSI(cleanData, req);
       if (req.query.type === 'rsi') {
-        cb(rsi);
+        return cb(null, rsi);
       }
 
       const triggerData = generateTrigger({ rsi, data: cleanData }, req);
       if (req.query.type === 'trigger') {
-        cb(triggerData);
+        return cb(null, triggerData);
       }
 
       const directionData = generateDirection(
@@ -42,7 +45,7 @@ export default function buildSignals(req, cb) {
         req,
       );
       if (req.query.type === 'direction') {
-        cb(directionData);
+        return cb(null, directionData);
       }
 
       const {
@@ -78,7 +81,7 @@ export default function buildSignals(req, cb) {
         dirZZMagnitudes,
       };
 
-      cb(null, signals);
+      return cb(null, signals);
     },
   );
 }

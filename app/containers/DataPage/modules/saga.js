@@ -31,6 +31,7 @@ export function* fetchPriceData(action) {
     const [data] = yield all([call(request, requestURL), put(async.request())]);
     yield put(receivedPriceData(data));
   } catch (err) {
+    debugger;
     yield call(handleSagaError, err, async.error);
   }
 }

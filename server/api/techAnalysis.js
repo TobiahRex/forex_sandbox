@@ -20,11 +20,12 @@ router.get('/generate/all', (req, res) => {
 
 router.get('/generate/prices', (req, res) => {
   const queryData = composeQueryParams.generate(req);
+
   queryData.type = 'prices';
   TechAnalysis.buildSignals({ query: queryData }, (err, data) => {
     if (data && queryData.logResults) console.log('\n', Object.keys(data));
     if (data && queryData.returnResults) {
-      res.handle(err, data);
+      res.handle(null, data);
     } else {
       res.handle(err);
     }

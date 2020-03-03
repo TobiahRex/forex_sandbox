@@ -26,9 +26,7 @@ app.use(express.static('public'));
 app.use((req, res, next) => {
   res.handle = (err, data) => {
     if (err) {
-      process.stdout.write(`Response Error: 😕
-${JSON.stringify(err)}
-`);
+      process.stdout.write(`Response Error: ${JSON.stringify(err)}`);
     } else {
       //       process.stdout.write(`Response Data: 😎
       // ${JSON.stringify(data)}
