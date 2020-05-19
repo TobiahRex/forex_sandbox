@@ -170,3 +170,29 @@ AssignPriceColor(
     else if SellZone then Color.red
     else Color.Gray
   );
+
+
+Addlabel(
+    1,
+    if 0 <= directionZZ and directionZZ < 3 then "  3  "
+    else if 3 <= directionZZ and directionZZ < 5 then "  5  "
+    else if 5 <= directionZZ and directionZZ < 8 then "  8  "
+    else if 8 <= directionZZ and directionZZ < 12 then "  12  "
+    else if 12 <= directionZZ then "  MOON  "
+    if 0 > directionZZ and directionZZ > -3 then "  -3  "
+    else if -3 >= directionZZ and directionZZ > -5 then "  -5  "
+    else if -5 >= directionZZ and directionZZ > -8 then "  -8  "
+    else if -8 >= directionZZ and directionZZ > -12 then "  -12  "
+    else "  HELL  "
+    ,
+    if 0 <= directionZZ and directionZZ < 3 then CreateColor(140, 3, 252) # Purple
+    else if 3 <= directionZZ and directionZZ < 5 then CreateColor(252, 136, 3) # Orange
+    else if 5 <= directionZZ and directionZZ < 8 then Color.Dark_Green
+    else if 8 <= directionZZ and directionZZ < 12 then Color.UPTICK
+    else if 12 <= directionZZ then Color.Cyan
+    if 0 > directionZZ and directionZZ > -3 then CreateColor(140, 3, 252) # Purple
+    else if -3 >= directionZZ and directionZZ > -5 then CreateColor(252, 136, 3) # Orange
+    else if -5 >= directionZZ and directionZZ > -8 then Color.DARK_RED
+    else if -8 >= directionZZ and directionZZ > -12 then Color.DOWNTICK
+    else CreateColor(248, 3, 252) # Hot Pink
+);

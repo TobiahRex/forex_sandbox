@@ -106,7 +106,13 @@ def BuyDiff = (
     && diff[1] > diff[2]
     #&& diff[2] > diff[3]
 );
-def sellBasket = fold i = 0 to length with currentSell = Double.NEGATIVE_INFINITY while currentDiff[i] < 0 do Max(currentSell, currentDiff[i]);
+def sellBasket = (
+  fold i = 0
+  to length
+  with currentSell = Double.NEGATIVE_INFINITY
+  while currentDiff[i] < 0
+    do Max(currentSell, currentDiff[i])
+);
 def buyBasket = fold j = 0 to length with currentBuy = Double.POSITIVE_INFINITY while currentDiff[j] > 0 do Min(currentBuy, currentDiff[j]);
 
 def BuyZone = (
