@@ -124,7 +124,6 @@ def isConfTrigger = AbsValue(chgTrigger) >= t_ReversalAmount
 #def x = trigZZ;
 #AddLabel(yes, AsText(x, NumberFormat.TWO_DECIMAL_PLACES), Color.WHITE);
 
-
 AddLabel(
     1,
     if _rsiEmaDirection >= 0                                   # Direction is Trending Up
@@ -168,37 +167,61 @@ AddLabel(
       if directionZZSave < _rsiEmaDirection
               then
               if zzSave >= GetValue(zzSave, 1)
-                  then if zzSave >= 0 then Color.YELLOW else CreateColor(248, 3, 252)   # Yellow & Hot Pink
+                  then if zzSave >= 0 then Color.YELLOW else Color.RED   # Yellow
               else
-                  if zzSave >= 0 then CreateColor(252, 136, 3) else Color.DOWNTICK      # Orange & Red
+                  if zzSave >= 0 then CreateColor(252, 136, 3) else CreateColor(248, 3, 252)      # Orange & Hot Pink
       else
           if zzSave >= GetValue(zzSave, 1)
                   then if zzSave >= 0 then CreateColor(140, 3, 252) else Color.DARK_GRAY
               else
                   if zzSave >= 0 then Color.GRAY else Color.GRAY          # Gray & Purple
 );
-#AddLabel(
-#    1,
-#    if directionZZSave < rsiBear
-#        then "  Down  "
-#    else "  Up  ",
-#    if directionZZSave > rsiBear
-#        then Color.UPTICK
-#    else CreateColor(248, 3, 252)
-#);
+def TT = (
+ if _rsiEmaDirection >= 0                            # Direction is Trending Up
+        then if directionZZSave >= _rsiEmaDirection                            # Direction ZZ is BUY (B1-4)
+            then
+                if zzSave >= GetValue(zzSave, 1)                  # Trigger is Rising
+                    then if zzSave >= 0 then 10 else 4         # Trigger above 0 (B1) else below 0 (B4)
+                else                                              # Trigger is Decreasing
+                    if zzSave >= 0 then 2 else 3              # Trigger above 0 (B2) else below 0 (B3)
+        else                                                    # Direction ZZ is SELL (S5-8)
+            if zzSave >= GetValue(zzSave, 1)                      # Trigger is Rising
+                    then if zzSave >= 0 then 5 else 8         # Trigger above 0 (B5) else below 0 (B8)
+                else                                              # Trigger is Decreasing
+                    if zzSave >= 0 then 6 else 7              # Trigger above 0 (B6) else below 0 (B7)
+    else                                                      # Direction is Trending Down
+        if  directionZZSave < _rsiEmaDirection                                 # Direction ZZ is SELL (S1-4)
+               then
+                if zzSave >= GetValue(zzSave, 1)                  # Trigger is Rising
+                    then if zzSave >= 0 then -3 else -2         # Trigger above 0 (S3) else below 0 (S2)
+                else                                              # Trigger is Decreasing
+                    if zzSave >= 0 then -4 else -1              # Trigger above 0 (S4) else below 0 (S1)
+        else                                                    # Direction ZZ is BUY (B5-8)
+            if zzSave >= GetValue(zzSave, 1)                      # Trigger is Rising
+                    then if zzSave >= 0 then -7 else -6         # Trigger above 0 (S7) else below 0 (S6)
+                else                                              # Trigger is Decreasing
+                    if zzSave >= 0 then -8 else -5              # Trigger above 0 (S8) else below 0 (S5)
+);
+def marketStrength = (
+    if 0 < TT && TT <= 4 then 1
+    else if 4 < TT && TT < 10 then -1
+    else if 0 > TT && TT >= -4 then 1
+    else if TT equals 10 then 1
+    else -1
+);
 
 Addlabel(
     1,
-    if 0 <= directionZZ and directionZZ < 3 then "  3  |  WEAK  "
-    else if 3 <= directionZZ and directionZZ < 5 then "  5  |  WEAK  "
-    else if 5 <= directionZZ and directionZZ < 8 then "  8  |  STRONG  "
-    else if 8 <= directionZZ and directionZZ < 12 then "  12  | + STRONG  "
-    else if 12 <= directionZZ then "  MOON  | ++ STRONG  "
-    else if 0 > directionZZ and directionZZ > -3 then "  -3  |  WEAK  "
-    else if -3 >= directionZZ and directionZZ > -5 then "  -5  |  WEAK  "
-    else if -5 >= directionZZ and directionZZ > -8 then "  -8  |  STRONG  "
-    else if -8 >= directionZZ and directionZZ > -12 then "  -12  |  + STRONG  "
-    else "  HELL  |  ++STRONG  "
+    if 0 <= directionZZ and directionZZ < 3 then "  0  |  " + if marketStrength == 1 then " STRONG  " else " WEAK  "
+    else if 3 <= directionZZ and directionZZ < 5 then "  3  |  " + if marketStrength == 1 then " STRONG  " else " WEAK  "
+    else if 5 <= directionZZ and directionZZ < 8 then "  5  |  " + if marketStrength == 1 then " STRONG  " else " WEAK  "
+    else if 8 <= directionZZ and directionZZ < 12 then "  8  | + " + if marketStrength == 1 then " STRONG  " else " WEAK  "
+    else if 12 <= directionZZ then "  12  | ++ " + if marketStrength == 1 then " STRONG  " else " WEAK  "
+    else if 0 > directionZZ and directionZZ > -3 then "  0  |  " + if marketStrength == 1 then " STRONG  " else " WEAK  "
+    else if -3 >= directionZZ and directionZZ > -5 then "  -3  |  " + if marketStrength == 1 then " STRONG  " else " WEAK  "
+    else if -5 >= directionZZ and directionZZ > -8 then "  -5  |  " + if marketStrength == 1 then " STRONG  " else " WEAK  "
+    else if -8 >= directionZZ and directionZZ > -12 then "  -8  |  + " + if marketStrength == 1 then " STRONG  " else " WEAK  "
+    else "  -12  |  ++ " + if marketStrength == 1 then " STRONG  " else " WEAK  "
     ,
     if 0 <= directionZZ and directionZZ < 3 then CreateColor(140, 3, 252)  #Purple
     else if 3 <= directionZZ and directionZZ < 5 then CreateColor(252, 136, 3)  #Orange
@@ -212,35 +235,6 @@ Addlabel(
     else CreateColor(248, 3, 252) # Hot Pink
 );
 
-
-
-
-def TT = (
- if _rsiEmaDirection >= 0                            # Direction is Trending Up
-        then if directionZZSave >= 0                            # Direction ZZ is BUY (B1-4)
-            then
-                if zzSave >= GetValue(zzSave, 1)                  # Trigger is Rising
-                    then if zzSave >= 0 then 10 else 4         # Trigger above 0 (B1) else below 0 (B4)
-                else                                              # Trigger is Decreasing
-                    if zzSave >= 0 then 2 else 3              # Trigger above 0 (B2) else below 0 (B3)
-        else                                                    # Direction ZZ is SELL (S5-8)
-            if zzSave >= GetValue(zzSave, 1)                      # Trigger is Rising
-                    then if zzSave >= 0 then -7 else -6         # Trigger above 0 (S7) else below 0 (S6)
-                else                                              # Trigger is Decreasing
-                    if zzSave >= 0 then -8 else -5              # Trigger above 0 (S8) else below 0 (S5)
-    else                                                      # Direction is Trending Down
-        if directionZZSave < 0                                  # Direction ZZ is SELL (S1-4)
-               then
-                if zzSave >= GetValue(zzSave, 1)                  # Trigger is Rising
-                    then if zzSave >= 0 then -3 else -2         # Trigger above 0 (S3) else below 0 (S2)
-                else                                              # Trigger is Decreasing
-                    if zzSave >= 0 then -4 else -1              # Trigger above 0 (S4) else below 0 (S1)
-        else                                                    # Direction ZZ is BUY (B5-8)
-            if zzSave >= GetValue(zzSave, 1)                      # Trigger is Rising
-                    then if zzSave >= 0 then 5 else 8         # Trigger above 0 (B5) else below 0 (B8)
-                else                                              # Trigger is Decreasing
-                    if zzSave >= 0 then 6 else 7              # Trigger above 0 (B6) else below 0 (B7)
-);
 
 #==================================================================
 #====================== Buy & Sell Detection ======================
