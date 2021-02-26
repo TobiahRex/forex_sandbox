@@ -21,6 +21,9 @@ function generateZigZag(_data) {
     duration: 1,
     startTime: 0,
     endTime: 0,
+    i: null,
+    value: null,
+    time: null,
   };
 
   // NOTE: populates "states" with object { ...defaultState }
@@ -31,7 +34,7 @@ function generateZigZag(_data) {
     const hlPivot = reversalAmount / 100;
 
     const state = { ...defaultState, value, time, i };
-    const trendHelpers = seedTrendHelpers({ states, priceH, priceL, time });
+    const Trend = seedTrend({ states, priceH, priceL, time });
 
     if (i === 0) {
       state.maxPriceH = value;
@@ -52,21 +55,21 @@ function generateZigZag(_data) {
 
     if (states[i].mode === 'unknown') {
       if (priceH >= state.prevMaxH) {
-        trendHelpers.updateState(state, 'uptrend');
-        trendHelpers.updatePrevTime();
+        Trend.updateState(state, 'uptrend');
+        Trend.updatePrevTime();
       } else if (priceL <= state.prevMinL) {
-        trendHelpers.updateState(state, 'downtrend');
-        trendHelpers.updatePrevTime();
+        Trend.updateState(state, 'downtrend');
+        Trend.updatePrevTime();
       } else {
-        trendHelpers.updateState(state, 'unknown');
+        Trend.updateState(state, 'unknown');
       }
     } else if (state.mode === 'downtrend') {
       if (priceH >= state.prevMinL + state.prevMinL * hlPivot) {
         // NOTE: downtrend but now a uptrend
-        trendHelpers.updateState(state, 'uptrend');
-        trendHelpers.updatePrevTime();
+        Trend.updateState(state, 'uptrend');
+        Trend.updatePrevTime();
       } else {
-        trendHelpers.updateState(state, 'downtrend', true);
+        Trend.updateState(state, 'downtrend', true);
         // NOTE: Continuation of the downtrend
         if (priceL <= state.prevMinL) {
           state.minPriceL = priceL;
@@ -79,11 +82,11 @@ function generateZigZag(_data) {
     } else if (state.mode === 'uptrend') {
       if (priceL <= state.prevMaxH - state.prevMaxH * hlPivot) {
         // NOTE: Uptrend but now a downtrend
-        trendHelpers.updateState(state, 'downtrend');
-        trendHelpers.updatePrevTime();
+        Trend.updateState(state, 'downtrend');
+        Trend.updatePrevTime();
       } else {
         // NOTE: Continuation of the uptrend
-        trendHelpers.updateState(state, 'uptrend', true);
+        Trend.updateState(state, 'uptrend', true);
         if (priceH >= state.prevMaxH) {
           state.maxPriceH = priceH;
           state.newMax = true;
@@ -104,10 +107,23 @@ function generateZigZag(_data) {
   };
 }
 
-function seedTrendHelpers({ states, priceH, priceL, time }) {
+/**
+ * @function seedTrend
+ * Initialization function to return an object with various methods to call to modify & update
+ * the running sliding window state. Can update trend mode to "uptrend" or "downtrend" etc.
+ * @param
+ * @return
+ */
+function seedTrend({ states, priceH, priceL, time }) {
   const Ix = states.length ? states.length - 1 : 0;
-  const state = states[Ix] ? states[Ix] : { mode: 'unknown', duration: 0 };
+  const state = states[Ix] || { mode: 'unknown', duration: 0 };
 
+  /**
+   * @function updateDuration
+   * updates counter that tracks how long the current trend length is active.
+   * @param {string} "uptrend" | "downtrend" | "unknown"
+   * @return {number}
+   */
   function updateDuration(thisMode) {
     if (thisMode === state.mode) {
       return state.duration + 1;
@@ -115,6 +131,16 @@ function seedTrendHelpers({ states, priceH, priceL, time }) {
     return 1;
   }
 
+  /**
+   * @function updateState
+   * Updates a running state with several flags & contextual data values.
+   * The state object is encapsulating several meta values about the current trend,
+   * as well as the global trend (maxPriceH, maxPriceL).
+   * @param {object} _state
+   * @param {string} trend
+   * @param {bool} continuation
+   * @return {null} * updates argument "state" by reference.
+   */
   function updateState(_state, trend, continuation = false) {
     if (trend === 'unknown') {
       _state.duration = updateDuration('unknown');
@@ -129,11 +155,12 @@ function seedTrendHelpers({ states, priceH, priceL, time }) {
       _state.duration = updateDuration(trend);
       _state.mode = trend;
       _state.startTime = time;
-      if (trend === 'uptrend') {
+      if (_state.mode === 'uptrend') {
         _state.minPriceL = _state.prevMinL;
         _state.maxPriceH = priceH;
         _state.newMax = true;
       } else {
+        // downtrend
         _state.maxPriceH = _state.prevMaxH;
         _state.minPriceL = priceL;
         _state.newMin = true;
@@ -141,7 +168,7 @@ function seedTrendHelpers({ states, priceH, priceL, time }) {
     } else {
       _state.duration = updateDuration(trend);
       _state.mode = trend;
-      if (trend === 'uptrend') {
+      if (_state.mode === 'uptrend') {
         _state.minPriceL = _state.prevMinL;
         _state.newMin = false;
       } else {

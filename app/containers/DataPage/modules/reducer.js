@@ -81,7 +81,7 @@ function handleDataError(state, action) {
   return state;
 }
 function handleDataReceiveSuite(state, action) {
-  debugger; // TODO: reconfig payload to redux state
+  // debugger; // TODO: reconfig payload to redux state
   return state.merge(fromJS(action.payload));
 }
 function handleDataReceivePrices(state, action) {

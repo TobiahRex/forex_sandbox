@@ -8,7 +8,7 @@ const getCycleMagnitude = require('./zigZag/zzGenerators/cycleMagnitude');
 const EMA = require('../indicators/ema');
 
 function generateDirection(options, { writeToFiles = true }) {
-  const { zigZagReversal, data } = options;
+  const { zigZagReversal, zigZagReversalSlow, data } = options;
 
   const fastRsiDirection = generateHigherTimeRsi({
     ...options,
@@ -23,6 +23,12 @@ function generateDirection(options, { writeToFiles = true }) {
     times: data.map(({ time }) => time),
     data: fastRsiDirection,
     reversalAmount: zigZagReversal,
+  });
+
+  const zigZagSlow = generateZigZag({
+    times: data.map(({ time }) => time),
+    data: fastRsiDirection,
+    reversalAmount: zigZagReversalSlow,
   });
 
   const rsiAverage = new EMA({

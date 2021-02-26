@@ -3,13 +3,13 @@
 exports[`<App /> should render and match the snapshot 1`] = `
 <ForwardRef>
   <HelmetWrapper
-    defaultTitle="React.js Boilerplate"
+    defaultTitle="Cointosis"
     defer={true}
     encodeSpecialCharacters={true}
-    titleTemplate="%s - React.js Boilerplate"
+    titleTemplate="%s Cointosis"
   >
     <meta
-      content="A React.js Boilerplate application"
+      content="Financial Market Trading Advisor"
       name="description"
     />
   </HelmetWrapper>
@@ -21,8 +21,16 @@ exports[`<App /> should render and match the snapshot 1`] = `
       path="/"
     />
     <Route
-      component={[Function]}
-      path="/features"
+      component={
+        Object {
+          "$$typeof": Symbol(react.memo),
+          "WrappedComponent": [Function],
+          "compare": null,
+          "displayName": "Connect(Component)",
+          "type": [Function],
+        }
+      }
+      path="/data"
     />
     <Route
       component={[Function]}

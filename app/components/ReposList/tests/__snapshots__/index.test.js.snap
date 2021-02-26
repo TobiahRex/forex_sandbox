@@ -72,7 +72,7 @@ exports[`<ReposList /> should render the repositories if loading was successful 
             href="https://github.com/react-boilerplate/react-boilerplate"
             target="_blank"
           >
-            react-boilerplate
+            mxstbr/react-boilerplate
           </a>
           <a
             class="A-br8h0y-0 IssueLink-uyzonb-0 kUUUnc"

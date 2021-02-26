@@ -41,6 +41,7 @@ export default function buildSignals(req, cb) {
           timeLength: 10,
           rawRsi: rsi,
           zigZagReversal: 5,
+          zigZagReversalSlow: 0.5,
         },
         req,
       );
@@ -61,6 +62,7 @@ export default function buildSignals(req, cb) {
         averageSmall: dirAverageSmall,
         averageBig: dirAverageBig,
         zigZag: dirZigZag,
+        zigZagSlow: dirZigZagSlow,
         zzDurations: dirZZDurations,
         zzMagnitudes: dirZZMagnitudes,
       } = directionData;

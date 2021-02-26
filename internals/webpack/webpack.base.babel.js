@@ -121,6 +121,6 @@ module.exports = options => ({
     mainFields: ['browser', 'jsnext:main', 'main'],
   },
   devtool: options.devtool,
-  target: 'web', // Make web variables accessible to webpack, e.g. window
+  target: 'node', // Make web variables accessible to webpack, e.g. window
   performance: options.performance || {},
 });
