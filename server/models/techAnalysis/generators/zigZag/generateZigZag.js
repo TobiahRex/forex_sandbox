@@ -43,7 +43,7 @@ function generateZigZag(_data) {
       state.prevMinL = value;
       state.newMax = true;
       state.newMin = true;
-      state.mode = 'unknown';
+      state.mode = 'unkif (nown';
       state.startTime = time;
     } else {
       state.mode = states[i - 1].mode;

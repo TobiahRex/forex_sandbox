@@ -1,0 +1,54 @@
+// Possible source outline for Concept Exposure Aggregation lookup
+
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "window": "2d"
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "concepts": {
+      "terms": {
+        "field": "source_cid",
+        "order": {
+          "avg_exposure": "desc"
+        }
+      },
+      "aggs": {
+        "avg_exposure": {
+          "avg": {
+            "field": "exposure"
+          }
+        }
+      }
+    }
+  },
+  "size": 0
+}
+
+// Children
+
+{
+  "query": {},
+  "aggs": {
+    "by_asset": {
+      "terms": {
+        "field": "cids.keyword"
+      }
+    },
+    "aggs": {
+      "our_agg": {
+        "children": {
+          "type": "exposure"
+        }
+      }
+    }
+  },
+  "size": 0
+}

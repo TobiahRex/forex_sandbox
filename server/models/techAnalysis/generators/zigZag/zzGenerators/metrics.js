@@ -3,11 +3,10 @@
   NOTE: ZigZag metrics is mainly responsible for generating the countable occurences,
   of various meta data. They are based on simple geometric ideas such as,
   rise, run, slope, area under line, slope magnitude, and overal slope direction.
-  Given these data points, we can objective an otherwise continuous data set,
-  into a discrete data set, and thus categorize that various data points
-  into different categories, and by so doing, extract probability of those
-  data points occuring in the future. Metrics, generation is at the heart of
-  generating these discrete data points.
+  Given these data points, we can make discrete an otherwise continuous data set,
+  and thus categorize that various data points into different categories,
+  and by so doing, extract probability of those data points occuring in the future.
+  Metrics generation is at the heart of generating these discrete data points.
  */
 
 /**
@@ -20,7 +19,7 @@
   [
     {
       slope: {number},
-      magnitude: {number},
+      magnitude: {number},=
       startState: {} // the state that starts the current ZZ trend
       endState: {} // the state that ends the current zz trend.
     }
@@ -75,6 +74,7 @@ function generateMetrics(states) {
 
         // NOTE: Calculates Force of momentum:
         acc.current.meta.force = (() => {
+          // TODO: Rebuild this from acceleration formula. v2^2 - v1^2 / 2d
           const { magnitude, distance, duration } = acc.current.meta;
           const velocity = distance / duration;
           return (magnitude * velocity) / duration;
@@ -85,27 +85,24 @@ function generateMetrics(states) {
         acc.all.push(acc.current);
 
         // NOTE: Setup next value object.
-        const startValue = (() => {
-          if (currentState.mode === 'uptrend') {
-            return currentState.minPriceL; // NOTE: The newest low
-          }
-          if (currentState.mode === 'downtrend') {
-            return currentState.maxPriceH; // NOTE: The newest high
-          }
-          return currentState.value; // WARNING: May need to traverse history and find the most recent trend and return the appropriate value.
-        })();
+        const startValue = currentState.mode === 'uptrend'
+          ? currentState.minPriceL :  // NOTE: The newest low
+            currentState.mode === 'downtrend'
+              ? currentState.maxPriceH // NOTE: The newest high
+              : currentState.value // WARNING: May need to traverse history and find the most recent trend and return the appropriate value.
 
         const seedVal = currentState.value - startValue; // NOTE: initialize the slope as the next height difference (positive or negative) then divide by 1 (implied).
-
+        const polarity = (seedVal > 0 ? 1 : -1);
+        const diagonalDistance = Math.sqrt(seedVal ** 2 + 1);
         acc.current = {
           meta: {
             slope: seedVal,
             vertical: seedVal,
-            distance: Math.sqrt(seedVal ** 2 + 1) * (seedVal > 0 ? 1 : -1),
+            distance: diagonalDistance * polarity,
             magnitude: 0,
             duration: 0,
           },
-          startState: { ...currentState }, // NOTE: If i is less than the last value, the give the next state, otherwise give the current state.
+          startState: { ...currentState }, // NOTE: If i is less than the last value, then give the next state, otherwise give the current state.
           endState: null,
           /*
             NOTE:
@@ -128,7 +125,9 @@ function generateMetrics(states) {
           magnitude: 0,
         },
         startState: states[0],
-        startValue: states[0].mode === 'uptrend' ? states[0].maxPriceH : states[0].minPriceL,
+        startValue: states[0].mode === 'unknown'
+          ? 0 :
+            states[0].mode === 'uptrend' ? states[0].maxPriceH : states[0].minPriceL,
       },
       all: [],
       endState: null,

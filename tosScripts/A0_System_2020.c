@@ -53,6 +53,44 @@ def rsiRedHistory = (fold j = 0 to rsiHistory_length with redRsi = 0
 def rsiSellHistory = if rsiRedHistory >= rsiHistory_threshold then 1 else 0;
 
 #==================================================================
+#========================= Stochastic ZZ ==========================
+#==================================================================
+def stoch_min_low = lowest(low, percentKLength);
+def stoch_max_high = highest(high, percentKLength);
+def stoch_rel_diff = close - (max_high + min_low)/2;
+def stoch_stoch_diff = max_high - min_low;
+def stoch_avgrel = expaverage(expaverage(rel_diff, percentDLength), percentDLength);
+def stoch_avgdiff = expaverage(expaverage(stoch_diff, percentDLength), percentDLength);
+def stoch_SlowK = reference StochasticFull(80,20,10,10,high,low,close,3,AverageType.EXPONENTIAL).FullK;
+
+def stoch_D = reference StochasticFull(80,20,10,10,high,low,close,3,AverageType.EXPONENTIAL).FullD;
+def stoch_zz = reference ZigZagHighLow(SlowK, SlowK, 0, reversalAmount, 1, 0);
+
+def zz_stoch = if !IsNaN(stoch_zz) then SlowK else GetValue(zz_stoch, 1);
+def stoch_chg = price - GetValue(zz_stoch, 1);
+def stoch_isUp = stoch_chg >= 0;
+def stoch_isConf = AbsValue(stoch_chg) >= reversalAmount or (IsNaN(GetValue(stoch_zz, 1)) and GetValue(stoch_isConf, 1));
+
+plot stoch_eighty = 80;
+plot stoch_twenty = 20;
+plot stoch_oversold = 35;
+plot stoch_overbought = 65;
+plot stoch_fifty = 50;
+
+#==================================================================
+#========================= MACD ===================================
+#==================================================================
+input macd_fast = 12;
+input macd_slow = 26;
+input macd_length = 9;
+input macd_avgtype = AverageType.EXPONENTIAL;
+plot macd_val = MovingAverage(macd_avgtype, close, macd_fast) - MovingAverage(macd_avgtype, close, macd_slow);
+plot macd_avg = MovingAverage(macd_avgtype, macd_val, macd_length);
+plot macd_diff = macd_val - macd_avg;
+plot ZeroLine = 0;
+plot UpSignal = if macd_diff crosses above ZeroLine then ZeroLine else Double.NaN;
+plot DownSignal = if macd_diff crosses below ZeroLine then ZeroLine else Double.NaN;
+#==================================================================
 #===================== Direction Calc =============================
 #==================================================================
 
@@ -210,6 +248,7 @@ def marketStrength = (
     else -1
 );
 
+
 Addlabel(
     1,
     if 0 <= directionZZ and directionZZ < 3 then "  0  |  " + if marketStrength == 1 then " STRONG  " else " WEAK  "
@@ -239,7 +278,6 @@ Addlabel(
 #==================================================================
 #====================== Buy & Sell Detection ======================
 #==================================================================
-
 def prey = (
     if emaFast > smaSlow then 1
     else if emaFast < smaSlow then -1
@@ -254,8 +292,6 @@ case Aggressive:
 case Conservative:
     outlook = -1;
 }
-
-
 #--------------------------- Consolidation ---------------------------
 def bearishConsolidation = if outlook == -1 then
     (_rsiDirection < _rsiEmaDirection) && (_rsiEmaDirection > lowerBound)
@@ -266,10 +302,7 @@ def bullishConsolidation = if outlook == -1 then
     else 0;
 
 def doNothing = bearishConsolidation or bullishConsolidation;
-
-
 #--------------------------- ZONES ---------------------------
-
 def BuyZone = (
   target == 1
   && doNothing == 0
@@ -280,9 +313,7 @@ def SellZone = (
   && doNothing == 0
   && _rsiDirection < _rsiEmaDirection
 );
-
 #--------------------------- BUY ---------------------------
-
 def buyTrig1 = Bullet crosses below triggerBuyLine;
 def buyTrig3 = Bullet crosses above triggerOS;
 def buyTrig4 = Bullet crosses above upperBound;
@@ -460,11 +491,9 @@ AssignPriceColor(
     ) then Color.DARK_GREEN
     else if candle_buy then Color.YELLOW
     else if candle_sell then Color.YELLOW
-    # else if (_rsiEmaDirection > rsiBear) && target == 1 then Color.Green
     else if (StrongBUY_aim && (target == 1)) && open > emaFast then Color.GREEN
     else if (StrongBUY_fire && (target == 1)) then Color.CYAN
     else if (StrongSELL_aim && (target == -1) && low < emaFast) then Color.RED
-    # else if _rsiEmaDirection < rsiBear && target == -1 then Color.Red
     else if (StrongSELL_fire && (target == -1)) then Color.MAGENTA
     else if BuyZone && (target == 1) && open > emaFast then Color.GREEN
     else if SellZone && (target == -1) && low < emaFast then Color.RED
